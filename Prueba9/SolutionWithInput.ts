@@ -1,6 +1,18 @@
 import * as readline from 'readline';
 
-function ElevatorWithInput(floors: number[], currentFloor: number, pressedFloors: {[key: number]: number}) {
+function askQuestion(query: string) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+
+    return new Promise(resolve => rl.question(query, ans => {
+        rl.close();
+        resolve(ans);
+    }))
+}
+
+async function ElevatorWithInput(floors: number[], currentFloor: number) {
     let direction: number = floors[0] > currentFloor ? 1 : 0;
 
     console.log('Elevador en piso', currentFloor);
@@ -27,9 +39,14 @@ function ElevatorWithInput(floors: number[], currentFloor: number, pressedFloors
         }
         floors.splice(floors.indexOf(nextFloor), 1);
         console.log('Elevador se detiene', floors);
-        if(pressedFloors[nextFloor] && floors.indexOf(pressedFloors[nextFloor]) == -1) {
-            floors.push(pressedFloors[nextFloor]);
-            console.log(`Piso ingresado ${pressedFloors[nextFloor]}`, floors);
+
+        let answer = await askQuestion("Quiere presionar un piso? [s/n] ");
+        if (answer == 's') {
+            let floor = await askQuestion("Ingrese el piso");
+            if(!isNaN(Number(floor)) && floors.indexOf(Number(floor)) == -1) {
+                floors.push(Number(floor));
+                console.log(`Piso ingresado ${floor}`, floors);
+            }
         }
         if(direction == 1) {
             direction = [...floors].filter((x) => x > currentFloor).length > 0 ? 1 : 0;
@@ -38,3 +55,5 @@ function ElevatorWithInput(floors: number[], currentFloor: number, pressedFloors
         }
     }
 }
+
+ElevatorWithInput([5,29,13,10], 4);

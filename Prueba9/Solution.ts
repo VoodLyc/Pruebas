@@ -1,5 +1,3 @@
-import * as readline from 'readline';
-
 function Elevator(floors: number[], currentFloor: number, pressedFloors: {[key: number]: number}) {
     let direction: number = floors[0] > currentFloor ? 1 : 0;
 
